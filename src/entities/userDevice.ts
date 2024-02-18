@@ -15,7 +15,7 @@ enum DeviceTypes {
 }
 
 type Props = {
-  userId?: string
+  userId: number
   deviceId: string
   name?: string
   type: DeviceTypes
@@ -24,12 +24,14 @@ type Props = {
 
 export class UserDevice {
   deviceId: string
+  userId: number
   name?: string
   type: DeviceTypes
   operationSystem: DeviceOperationSystem
 
-  constructor({ deviceId, name, type, operationSystem }: Props) {
+  constructor({ deviceId, userId, name, type, operationSystem }: Props) {
     this.deviceId = deviceId
+    this.userId = userId
     this.name = name
     this.type = type
     this.operationSystem = operationSystem

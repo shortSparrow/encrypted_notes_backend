@@ -16,6 +16,11 @@ type AddRefreshTokenToDeviceProps = {
   refreshToken: string
 }
 
+type GetDeviceByDeviceIdProps = {
+  deviceId: string
+  userId: number
+}
+
 @injectable()
 export class DeviceRepository {
   addNewUserDevice = async (
@@ -35,22 +40,19 @@ export class DeviceRepository {
     }
   }
 
-  getDeviceByDeviceId = async (
-    deviceId: string
-  ): Promise<UserDevice | null> => {
+  getDeviceByDeviceId = async ({
+    deviceId,
+    userId,
+  }: GetDeviceByDeviceIdProps): Promise<UserDevice | null> => {
     try {
-      const result = await query("SELECT * FROM devices WHERE device_id = $1", [
-        deviceId,
-      ])
+      const result = await query(
+        "SELECT * FROM devices WHERE device_id = $1 AND user_id = $2",
+        [deviceId, userId]
+      )
 
       if (!result.rows[0]) return null
 
-      const {
-        user_id: userId,
-        name,
-        type,
-        operation_system: operationSystem,
-      } = result.rows[0]
+      const { name, type, operation_system: operationSystem } = result.rows[0]
 
       return new UserDevice({ deviceId, userId, name, type, operationSystem })
     } catch (err) {

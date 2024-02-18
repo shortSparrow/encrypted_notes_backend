@@ -48,4 +48,26 @@ export class UserRepository {
       return null
     }
   }
+
+  getUserById = async (userId: number): Promise<User | null> => {
+    try {
+      const result = await query("SELECT * FROM users WHERE id = $1", [userId])
+
+      // device with such deviceId not found
+      if (!result.rows[0]) return null
+
+      const { id, name, phone, password_hashed: password } = result.rows[0]
+
+      return new User({
+        id,
+        phone,
+        name,
+        passwordHashed: password,
+      })
+    } catch (err) {
+      // TODO handler error (add logger probably)
+      console.log("err: ", err)
+      return null
+    }
+  }
 }

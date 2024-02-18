@@ -8,19 +8,21 @@ import {
   UnknownError,
 } from "../../../entities/errors"
 import { comparePasswordSync } from "../../../utils/hashed/hashedPasswordSync"
-import { TokenUseCase } from "../../token/tokenUseCase"
+import { GenerateTokensUseCase } from "../../token/generateTokens/generateTokensUseCase"
 import { GetDeviceUseCase } from "../../userDevice/getDevice/getDeviceUseCase"
 import { AddNewUserDeviceUseCase } from "../../userDevice/addNewUser/addNewUserDeviceUseCase"
 import { LoginUserProps, LoginUserResponse } from "./loginUserUseCase.types"
 import { loginValidationSchema } from "../../../extensions/validation/user/user"
+import { AddAndDeleteRefreshToken } from "../../token/addAndDeleteRefreshToken/addAndDeleteRefreshTokenUseCase"
 
 @injectable()
 export class LoginUserUseCase {
   constructor(
     private _userRepository: UserRepository,
-    private _tokenUseCase: TokenUseCase,
+    private _tokenUseCase: GenerateTokensUseCase,
     private _getDeviceUseCase: GetDeviceUseCase,
-    private _addNewUserDeviceUseCase: AddNewUserDeviceUseCase
+    private _addNewUserDeviceUseCase: AddNewUserDeviceUseCase,
+    private _addAndDeleteRefreshToken: AddAndDeleteRefreshToken
   ) {}
 
   login = async (params: LoginUserProps): LoginUserResponse => {
@@ -45,7 +47,10 @@ export class LoginUserUseCase {
         return new UnauthorizedError("phone or password invalid")
       }
 
-      const device = await this._getDeviceUseCase.getDeviceById(params.deviceId)
+      const device = await this._getDeviceUseCase.getDeviceById({
+        deviceId: params.deviceId,
+        userId: user.id,
+      })
 
       if (device === null) {
         return this._loginFromNewDevice(params.deviceId, user.id)
@@ -91,10 +96,16 @@ export class LoginUserUseCase {
     deviceId: string,
     userId: number
   ) => {
-    const accessToken = this._tokenUseCase.generateAccessToken(userId)
-    const refreshToken = this._tokenUseCase.generateRefreshToken(userId)
+    const accessToken = this._tokenUseCase.generateAccessToken({
+      userId,
+      deviceId,
+    })
+    const refreshToken = this._tokenUseCase.generateRefreshToken({
+      userId,
+      deviceId,
+    })
     const isResultSuccess =
-      await this._tokenUseCase.resetAllRefreshTokensForDevice({
+      await this._addAndDeleteRefreshToken.resetAllRefreshTokensForDevice({
         userId,
         deviceId,
       })
@@ -103,11 +114,12 @@ export class LoginUserUseCase {
       // TODO log something or hale this (only for server side.. User should not know about it)
     }
 
-    const addedTokenResult = await this._tokenUseCase.addNewRefreshToken({
-      refreshToken,
-      userId,
-      deviceId,
-    })
+    const addedTokenResult =
+      await this._addAndDeleteRefreshToken.addNewRefreshToken({
+        refreshToken,
+        userId,
+        deviceId,
+      })
 
     if (addedTokenResult instanceof FailedToCreateError) {
       return addedTokenResult

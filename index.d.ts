@@ -8,3 +8,9 @@ declare module "express-serve-static-core" {
     verifiedToken?: AuthToken;
   }
 }
+
+
+export type UserDeviceId = {
+  userId: number
+  deviceId: string
+}

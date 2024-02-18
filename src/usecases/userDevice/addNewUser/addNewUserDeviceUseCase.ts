@@ -1,26 +1,20 @@
 import { injectable } from "tsyringe"
 import { DeviceRepository } from "../../../repositories/device.repository"
 import { userDeviceValidationSchema } from "../../../extensions/validation/userDevice/addNewDevice"
-import { TokenUseCase } from "../../token/tokenUseCase"
-import {
-  BadRequestError,
-  FailedToCreateError,
-} from "../../../entities/errors"
+import { GenerateTokensUseCase } from "../../token/generateTokens/generateTokensUseCase"
+import { BadRequestError, FailedToCreateError } from "../../../entities/errors"
 import { AddUserProps, AddUserResponse } from "./addNewUserDeviceUseCase.types"
+import { AddAndDeleteRefreshToken } from "../../token/addAndDeleteRefreshToken/addAndDeleteRefreshTokenUseCase"
 
 @injectable()
 export class AddNewUserDeviceUseCase {
   constructor(
     private _deviceRepository: DeviceRepository,
-    private _tokenUseCase: TokenUseCase
+    private _tokenUseCase: GenerateTokensUseCase,
+    private _addAndDeleteRefreshToken: AddAndDeleteRefreshToken
   ) {}
 
-  private _isParamsValid = ({
-    deviceId,
-    name,
-    type,
-    operationSystem,
-  }: any) => {
+  private _isParamsValid = ({ deviceId, name, type, operationSystem }: any) => {
     const validationResult = userDeviceValidationSchema.validate({
       deviceId,
       name,
@@ -59,10 +53,16 @@ export class AddNewUserDeviceUseCase {
       return new FailedToCreateError("Can't register new user device")
     }
 
-    const accessToken = this._tokenUseCase.generateAccessToken(userId)
-    const refreshToken = this._tokenUseCase.generateRefreshToken(userId)
+    const accessToken = this._tokenUseCase.generateAccessToken({
+      userId,
+      deviceId,
+    })
+    const refreshToken = this._tokenUseCase.generateRefreshToken({
+      userId,
+      deviceId,
+    })
 
-    this._tokenUseCase.addNewRefreshToken({
+    this._addAndDeleteRefreshToken.addNewRefreshToken({
       userId,
       deviceId,
       refreshToken,
