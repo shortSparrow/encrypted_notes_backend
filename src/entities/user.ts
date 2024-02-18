@@ -1,14 +1,14 @@
 type Props = {
   id: number
   phone: string
-  name: string
+  name?: string
   passwordHashed: string
 }
 
 export class User {
   id: number
   phone: string
-  name: string
+  name?: string
   hashedPassword: string
 
   constructor({ id, phone, name, passwordHashed: hashedPassword }: Props) {

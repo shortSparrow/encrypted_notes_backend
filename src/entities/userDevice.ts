@@ -18,16 +18,16 @@ type Props = {
   userId: number
   deviceId: string
   name?: string
-  type: DeviceTypes
-  operationSystem: DeviceOperationSystem
+  type?: DeviceTypes
+  operationSystem?: DeviceOperationSystem
 }
 
 export class UserDevice {
   deviceId: string
   userId: number
   name?: string
-  type: DeviceTypes
-  operationSystem: DeviceOperationSystem
+  type?: DeviceTypes
+  operationSystem?: DeviceOperationSystem
 
   constructor({ deviceId, userId, name, type, operationSystem }: Props) {
     this.deviceId = deviceId

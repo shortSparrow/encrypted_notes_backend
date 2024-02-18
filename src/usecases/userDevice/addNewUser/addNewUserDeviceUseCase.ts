@@ -62,11 +62,16 @@ export class AddNewUserDeviceUseCase {
       deviceId,
     })
 
-    this._addAndDeleteRefreshToken.addNewRefreshToken({
-      userId,
-      deviceId,
-      refreshToken,
-    })
+    const resultAddNewRefreshToken =
+      await this._addAndDeleteRefreshToken.addNewRefreshToken({
+        userId,
+        deviceId,
+        refreshToken,
+      })
+
+    if (resultAddNewRefreshToken instanceof FailedToCreateError) {
+      return resultAddNewRefreshToken
+    }
 
     return { accessToken, refreshToken }
   }
