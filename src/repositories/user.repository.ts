@@ -13,7 +13,7 @@ export class UserRepository {
     try {
       const { phone, passwordHashed } = props
       const result = await query(
-        "INSERT INTO users (phoned, password_hashed) VALUES($1, $2) RETURNING id",
+        "INSERT INTO users (phone, password_hashed) VALUES($1, $2) RETURNING id",
         [phone, passwordHashed]
       )
 
