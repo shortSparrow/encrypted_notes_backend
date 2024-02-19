@@ -27,7 +27,7 @@ export const registerController = async (req: Request, res: Response) => {
   ) {
     return res
       .status(responseRegisterUser.code)
-      .send(responseRegisterUser.message)
+      .json({ message: responseRegisterUser.message })
   }
 
   const responseRegisterDevice = await addNewUserDeviceUseCase.addUserDevice({

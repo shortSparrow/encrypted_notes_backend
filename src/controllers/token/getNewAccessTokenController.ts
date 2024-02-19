@@ -36,7 +36,7 @@ export const getNewAccessTokenController = async (
     return res.status(result.code).json({ message: result.message })
   }
 
-  return res.status(200).send({
+  return res.status(200).json({
     accessToken: result.accessToken,
     refreshToken: result.refreshToken,
   })

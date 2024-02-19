@@ -21,15 +21,18 @@ export const loginController = async (req: Request, res: Response) => {
   })
 
   if (result instanceof NotFoundError || result instanceof UnauthorizedError) {
-    return res.status(401).send("Phone or password is invalid")
+    return res.status(401).json({ message: "Phone or password is invalid" })
   }
 
-  if (result instanceof FailedToCreateError || result instanceof BadRequestError) {
-    return res.status(result.code).send(result.message)
+  if (
+    result instanceof FailedToCreateError ||
+    result instanceof BadRequestError
+  ) {
+    return res.status(result.code).json({ message: result.message })
   }
 
   if (result instanceof UnknownError) {
-    return res.status(520).send("Unknown error happened")
+    return res.status(520).json({ message: "Unknown error happened" })
   }
 
   return res.status(200).send({
