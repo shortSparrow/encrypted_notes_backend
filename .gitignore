@@ -1,7 +1,10 @@
 node_modules
 .DS_Store
-*.env
+.env
+.env.*
 build
 src/public/*
 combined.log
 error.log
+coverage
+dist

@@ -10,3 +10,11 @@ export const databaseConfig: ClientConfig = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 }
+
+export const databaseTestConfig: ClientConfig = {
+  host: process.env.DB_HOST,
+  port: 5435,
+  user: "user123test",
+  password: "password123test",
+  database: "database123test",
+}

@@ -1,4 +1,3 @@
-import { log } from "console"
 import { migrateFrom0To1 } from "./migration_0-1"
 
 export const runMigrations = async () => {
