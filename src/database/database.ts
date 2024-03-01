@@ -9,7 +9,7 @@ export const initDb = async () => {
     await dbClient.connect()
     await runMigrations()
 
-    console.log("Connected to DB successfully")
+    console.log("Connected to DB successfully: ", dbClient.database)
   } catch (err) {
     console.log("Failed to connect to DB: ", err)
   }

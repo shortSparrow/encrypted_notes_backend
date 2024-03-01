@@ -22,6 +22,26 @@ services:
       timeout: 1s
       retries: 55
       interval: 3s
+  db2:
+    image: postgres
+    container_name: postgres2
+    ports:
+      - '5435:5432'
+    expose:
+     - 5435
+    environment:
+      POSTGRES_USER: user123test
+      POSTGRES_PASSWORD: password123test
+      POSTGRES_DB: database123test
+    networks:
+      - ecxelmy
+    volumes:
+      - my-datavolume:/var/lib/postgresql
+    healthcheck:
+      test: /usr/local/bin/healthcheck.sh --su-mysql --connect --innodb_initialized
+      timeout: 1s
+      retries: 55
+      interval: 3s
 volumes:
   my-datavolume:
     driver: local
