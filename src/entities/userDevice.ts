@@ -1,7 +1,7 @@
 import { JWK } from "./jwk"
 
 // * DeviceOperationSystem for browsers will be bull
-enum DeviceOperationSystem {
+export enum DeviceOperationSystem {
   android = "android",
   ios = "ios",
   linux = "linux",
@@ -9,7 +9,7 @@ enum DeviceOperationSystem {
   macOS = "macOS",
 }
 
-enum DeviceTypes {
+export enum DeviceTypes {
   smartphone = "smartphone",
   tablet = "tablet",
   laptop = "laptop",

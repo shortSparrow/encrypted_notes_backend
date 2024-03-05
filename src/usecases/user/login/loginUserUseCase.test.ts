@@ -2,6 +2,7 @@ import { container } from "tsyringe"
 import { LoginUserUseCase } from "./loginUserUseCase"
 import {
   BadRequestError,
+  FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
 } from "../../../entities/errors"
@@ -166,13 +167,29 @@ describe("LoginUserUseCase", () => {
     })
   })
 
-  it("should call ", async () => {
+  it("should return FailedToCreateError if addNewRefreshToken return FailedToCreateError error ", async () => {
     const registerUserUseCase = container.resolve(LoginUserUseCase)
     mockGetUserByPhone.mockImplementation(() => fakeUser)
     mockComparePasswordSync.mockImplementation(() => true)
     mockGetDeviceById.mockImplementation(() => fakeUserDevice)
     mockGenerateAccessToken.mockImplementation(() => "accessToken")
     mockGenerateRefreshToken.mockImplementation(() => "refreshToken")
+    mockAddNewRefreshToken.mockImplementation(() => new FailedToCreateError())
+
+    const result = await registerUserUseCase.login(correctParams)
+    expect(mockResetAllRefreshTokensForDevice).toHaveBeenCalledTimes(1)
+    expect(mockAddNewRefreshToken).toHaveBeenCalledTimes(1)
+    expect(result).toBeInstanceOf(FailedToCreateError)
+  })
+
+  it("should return access and refresh token if everything went good  ", async () => {
+    const registerUserUseCase = container.resolve(LoginUserUseCase)
+    mockGetUserByPhone.mockImplementation(() => fakeUser)
+    mockComparePasswordSync.mockImplementation(() => true)
+    mockGetDeviceById.mockImplementation(() => fakeUserDevice)
+    mockGenerateAccessToken.mockImplementation(() => "accessToken")
+    mockGenerateRefreshToken.mockImplementation(() => "refreshToken")
+    mockAddNewRefreshToken.mockImplementation(() => undefined)
 
     const result = await registerUserUseCase.login(correctParams)
     expect(mockResetAllRefreshTokensForDevice).toHaveBeenCalledTimes(1)
