@@ -4,6 +4,7 @@ import { AddNewUserDeviceUseCase } from "../../userDevice/addNewUser/addNewUserD
 import { DeviceRepository } from "../../../repositories/device.repository"
 import { GenerateTokensUseCase } from "../../token/generateTokens/generateTokensUseCase"
 import { AddAndDeleteRefreshToken } from "../../token/addAndDeleteRefreshToken/addAndDeleteRefreshTokenUseCase"
+import { mockNoteEncryptionPublicKey } from "../../../__mock__/mockEncryption"
 
 const mockAddNewUserDevice = jest.fn()
 const mockGenerateRefreshToken = jest.fn()
@@ -66,6 +67,7 @@ describe("AddNewUserDeviceUseCase", () => {
       name: "Senya",
       type: "smartphone",
       operationSystem: "android",
+      noteEncryptionPublicKey: mockNoteEncryptionPublicKey
     })
     expect(mockAddNewUserDevice).toHaveBeenCalledTimes(1)
     expect(result).toBeInstanceOf(FailedToCreateError)
@@ -84,6 +86,7 @@ describe("AddNewUserDeviceUseCase", () => {
       name: "Senya",
       type: "smartphone",
       operationSystem: "android",
+      noteEncryptionPublicKey: mockNoteEncryptionPublicKey
     })
 
     expect(mockAddNewUserDevice).toHaveBeenCalledTimes(1)
@@ -106,6 +109,7 @@ describe("AddNewUserDeviceUseCase", () => {
       name: "Senya",
       type: "smartphone",
       operationSystem: "android",
+      noteEncryptionPublicKey: mockNoteEncryptionPublicKey
     })
 
     expect(mockAddNewUserDevice).toHaveBeenCalledTimes(1)

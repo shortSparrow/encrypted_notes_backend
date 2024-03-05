@@ -10,7 +10,7 @@ import {
 } from "../../entities/errors"
 
 export const registerController = async (req: Request, res: Response) => {
-  const { phone, password, deviceId } = req.body
+  const { phone, password, deviceId, noteEncryptionPublicKey } = req.body
 
   const registerUseCase = container.resolve(RegisterUserUseCase)
   const addNewUserDeviceUseCase = container.resolve(AddNewUserDeviceUseCase)
@@ -33,6 +33,7 @@ export const registerController = async (req: Request, res: Response) => {
   const responseRegisterDevice = await addNewUserDeviceUseCase.addUserDevice({
     userId: responseRegisterUser.id,
     deviceId: deviceId,
+    noteEncryptionPublicKey: noteEncryptionPublicKey,
   })
 
   if (responseRegisterDevice instanceof BadRequestError) {

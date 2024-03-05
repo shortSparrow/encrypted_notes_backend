@@ -14,12 +14,19 @@ export class AddNewUserDeviceUseCase {
     private _addAndDeleteRefreshToken: AddAndDeleteRefreshToken
   ) {}
 
-  private _isParamsValid = ({ deviceId, name, type, operationSystem }: any) => {
+  private _isParamsValid = ({
+    deviceId,
+    name,
+    type,
+    operationSystem,
+    noteEncryptionPublicKey,
+  }: any) => {
     const validationResult = userDeviceValidationSchema.validate({
       deviceId,
       name,
       type,
       operationSystem,
+      noteEncryptionPublicKey,
     })
 
     if (validationResult.error) {
@@ -30,10 +37,19 @@ export class AddNewUserDeviceUseCase {
   }
 
   addUserDevice = async (params: AddUserProps): AddUserResponse => {
-    const { deviceId, userId, name, type, operationSystem } = params
+    const {
+      deviceId,
+      userId,
+      name,
+      type,
+      operationSystem,
+      noteEncryptionPublicKey,
+    } = params
+
     const validationResult = this._isParamsValid({
       deviceId,
       name,
+      noteEncryptionPublicKey,
       type,
       operationSystem,
     })
@@ -44,6 +60,7 @@ export class AddNewUserDeviceUseCase {
     const id = await this._deviceRepository.addNewUserDevice({
       deviceId,
       userId,
+      noteEncryptionPublicKey: JSON.stringify(noteEncryptionPublicKey),
       name,
       type,
       operationSystem,

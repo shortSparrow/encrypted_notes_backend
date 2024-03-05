@@ -11,13 +11,14 @@ import {
 } from "../../entities/errors"
 
 export const loginController = async (req: Request, res: Response) => {
-  const { phone, password, deviceId } = req.body
+  const { phone, password, deviceId, noteEncryptionPublicKey } = req.body
 
   const loginUseCase = container.resolve(LoginUserUseCase)
   const result = await loginUseCase.login({
     phone: phone,
     password: password,
     deviceId: deviceId,
+    noteEncryptionPublicKey: noteEncryptionPublicKey,
   })
 
   if (result instanceof NotFoundError || result instanceof UnauthorizedError) {

@@ -14,6 +14,7 @@ import { AddNewUserDeviceUseCase } from "../../userDevice/addNewUser/addNewUserD
 import { LoginUserProps, LoginUserResponse } from "./loginUserUseCase.types"
 import { loginValidationSchema } from "../../../extensions/validation/user/user"
 import { AddAndDeleteRefreshToken } from "../../token/addAndDeleteRefreshToken/addAndDeleteRefreshTokenUseCase"
+import { JWK } from "../../../entities/jwk"
 
 @injectable()
 export class LoginUserUseCase {
@@ -53,7 +54,11 @@ export class LoginUserUseCase {
       })
 
       if (device === null) {
-        return this._loginFromNewDevice(params.deviceId, user.id)
+        return this._loginFromNewDevice(
+          params.deviceId,
+          user.id,
+          params.noteEncryptionPublicKey
+        )
       }
 
       return this._loginFromExistingDevice(params.deviceId, user.id)
@@ -64,19 +69,24 @@ export class LoginUserUseCase {
   }
 
   private _isParamsValid = (props: LoginUserProps) => {
-    const { phone, password, deviceId } = props
+    const { phone, password, deviceId, noteEncryptionPublicKey } = props
     const validationResult = loginValidationSchema.validate({
       password,
       phone,
       deviceId,
+      noteEncryptionPublicKey,
     })
 
     return validationResult.error
   }
 
-  private _loginFromNewDevice = async (deviceId: string, userId: number) => {
+  private _loginFromNewDevice = async (
+    deviceId: string,
+    userId: number,
+    noteEncryptionPublicKey: JWK
+  ) => {
     const newDeviceResponse = await this._addNewUserDeviceUseCase.addUserDevice(
-      { deviceId, userId }
+      { deviceId, userId, noteEncryptionPublicKey }
     )
 
     if (

@@ -12,6 +12,8 @@ import { AddAndDeleteRefreshToken } from "../../token/addAndDeleteRefreshToken/a
 import { UserDevice } from "../../../entities/userDevice"
 import { User } from "../../../entities/user"
 import { GenerateTokensUseCase } from "../../token/generateTokens/generateTokensUseCase"
+import { mockNoteEncryptionPublicKey } from "../../../__mock__/mockEncryption"
+import { JWK } from "../../../entities/jwk"
 
 const correctPhone = "+380663927900"
 const correctPassword = "pass"
@@ -20,6 +22,7 @@ const correctParams = {
   password: correctPassword,
   phone: correctPhone,
   deviceId: "device_1",
+  noteEncryptionPublicKey: mockNoteEncryptionPublicKey,
 }
 
 const fakeUserDevice = new UserDevice({ deviceId: "1", userId: 1 })
@@ -87,6 +90,7 @@ describe("LoginUserUseCase", () => {
       password: "",
       phone: "",
       deviceId: "",
+      noteEncryptionPublicKey: {} as JWK,
     })
     expect(result1).toBeInstanceOf(BadRequestError)
 
@@ -94,6 +98,7 @@ describe("LoginUserUseCase", () => {
       password: "",
       phone: correctPhone,
       deviceId: "",
+      noteEncryptionPublicKey: {} as JWK,
     })
     expect(result2).toBeInstanceOf(BadRequestError)
 
@@ -101,6 +106,7 @@ describe("LoginUserUseCase", () => {
       password: correctPassword,
       phone: "",
       deviceId: "",
+      noteEncryptionPublicKey: {} as JWK,
     })
     expect(result3).toBeInstanceOf(BadRequestError)
 
@@ -108,8 +114,17 @@ describe("LoginUserUseCase", () => {
       password: correctPassword,
       phone: correctPhone,
       deviceId: 1 as unknown as string,
+      noteEncryptionPublicKey: {} as JWK,
     })
     expect(result4).toBeInstanceOf(BadRequestError)
+
+    const result5 = await registerUserUseCase.login({
+      password: correctPassword,
+      phone: correctPhone,
+      deviceId: "1",
+      noteEncryptionPublicKey: {} as JWK,
+    })
+    expect(result5).toBeInstanceOf(BadRequestError)
   })
 
   it("should return NotFoundError user with passed id don't exist", async () => {

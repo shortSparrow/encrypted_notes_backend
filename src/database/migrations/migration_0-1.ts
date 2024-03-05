@@ -13,7 +13,7 @@ export const migrateFrom0To1 = async () => {
   )
 
   await dbClient.query(
-    `CREATE TABLE IF NOT EXISTS ${TableNames.DEVICES} (id SERIAL PRIMARY KEY, user_id SERIAL NOT NULL, device_id TEXT NOT NULL, name TEXT, type TEXT, operation_system TEXT);`
+    `CREATE TABLE IF NOT EXISTS ${TableNames.DEVICES} (id SERIAL PRIMARY KEY, user_id SERIAL NOT NULL, public_key_for_notes_encryption TEXT NOT NULL, device_id TEXT NOT NULL, name TEXT, type TEXT, operation_system TEXT);`
   )
 
   // TODO maybe rename device_id to device_global_id. Щоб не плутати його з полем id у табличці devices

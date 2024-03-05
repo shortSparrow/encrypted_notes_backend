@@ -6,4 +6,12 @@ export const userDeviceValidationSchema = Joi.object({
   name: Joi.string().max(50),
   type: Joi.string().alphanum(),
   operationSystem: Joi.string().alphanum(),
+  noteEncryptionPublicKey: Joi.object({
+    crv: Joi.string().valid("X25519").error(new Error("Invalid public key")),
+    kty: Joi.string().valid("OKP").error(new Error("Invalid public key")),
+    x: Joi.string()
+      .alphanum()
+      .required()
+      .error(new Error("Invalid public key")),
+  }).required(),
 })

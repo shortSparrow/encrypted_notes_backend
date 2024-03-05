@@ -2,6 +2,7 @@ import {
   BadRequestError,
   FailedToCreateError,
 } from "../../../entities/errors"
+import { JWK } from "../../../entities/jwk"
 
 export type AddUserProps = {
   deviceId: string
@@ -9,6 +10,7 @@ export type AddUserProps = {
   name?: string
   type?: string
   operationSystem?: string
+  noteEncryptionPublicKey: JWK
 }
 
 type AddUserSuccess = {

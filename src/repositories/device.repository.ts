@@ -1,6 +1,7 @@
 import { injectable } from "tsyringe"
 import { query } from "../utils/db/query"
 import { UserDevice } from "../entities/userDevice"
+import { TableNames } from "../database/constants"
 
 type AddNewUserDeviceProps = {
   deviceId: string
@@ -8,6 +9,7 @@ type AddNewUserDeviceProps = {
   name?: string
   type?: string
   operationSystem?: string
+  noteEncryptionPublicKey: string
 }
 
 type AddRefreshTokenToDeviceProps = {
@@ -27,10 +29,10 @@ export class DeviceRepository {
     props: AddNewUserDeviceProps
   ): Promise<number | null> => {
     try {
-      const { deviceId, userId, name, type, operationSystem } = props
+      const { deviceId, userId, noteEncryptionPublicKey, name, type, operationSystem } = props
       const result = await query(
-        "INSERT INTO devices (device_id, user_id, name, type, operation_system) VALUES($1, $2, $3, $4, $5) RETURNING id",
-        [deviceId, userId, name, type, operationSystem]
+        `INSERT INTO ${TableNames.DEVICES} (device_id, user_id, public_key_for_notes_encryption, name, type, operation_system) VALUES($1, $2, $3, $4, $5, $6) RETURNING id`,
+        [deviceId, userId, noteEncryptionPublicKey, name, type, operationSystem]
       )
 
       return result.rows[0]?.id ?? null
@@ -46,7 +48,7 @@ export class DeviceRepository {
   }: GetDeviceByDeviceIdProps): Promise<UserDevice | null> => {
     try {
       const result = await query(
-        "SELECT * FROM devices WHERE device_id = $1 AND user_id = $2",
+        `SELECT * FROM ${TableNames.DEVICES} WHERE device_id = $1 AND user_id = $2`,
         [deviceId, userId]
       )
 
@@ -67,7 +69,7 @@ export class DeviceRepository {
     try {
       const { userId, deviceId, refreshToken } = props
       const result = await query(
-        "INSERT INTO device_refresh_tokens (user_id, device_id, token) VALUES($1, $2, $3) RETURNING id",
+        `INSERT INTO ${TableNames.DEVICE_REFRESH_TOKENS} (user_id, device_id, token) VALUES($1, $2, $3) RETURNING id`,
         [userId, deviceId, refreshToken]
       )
 
