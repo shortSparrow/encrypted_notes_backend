@@ -29,7 +29,14 @@ export class DeviceRepository {
     props: AddNewUserDeviceProps
   ): Promise<number | null> => {
     try {
-      const { deviceId, userId, noteEncryptionPublicKey, name, type, operationSystem } = props
+      const {
+        deviceId,
+        userId,
+        noteEncryptionPublicKey,
+        name,
+        type,
+        operationSystem,
+      } = props
       const result = await query(
         `INSERT INTO ${TableNames.DEVICES} (device_id, user_id, public_key_for_notes_encryption, name, type, operation_system) VALUES($1, $2, $3, $4, $5, $6) RETURNING id`,
         [deviceId, userId, noteEncryptionPublicKey, name, type, operationSystem]
@@ -54,9 +61,47 @@ export class DeviceRepository {
 
       if (!result.rows[0]) return null
 
-      const { name, type, operation_system: operationSystem } = result.rows[0]
+      const {
+        name,
+        type,
+        operation_system: operationSystem,
+        public_key_for_notes_encryption: noteEncryptionPublicKey,
+      } = result.rows[0]
 
-      return new UserDevice({ deviceId, userId, name, type, operationSystem })
+      return new UserDevice({
+        deviceId,
+        userId,
+        name,
+        type,
+        operationSystem,
+        noteEncryptionPublicKey,
+      })
+    } catch (err) {
+      // TODO handler error
+      return null
+    }
+  }
+
+  getAllUserDevices = async (userId: number): Promise<UserDevice[] | null> => {
+    try {
+      const result = await query(
+        `SELECT * FROM ${TableNames.DEVICES} WHERE user_id = $1`,
+        [userId]
+      )
+
+      if (!result.rows.length) return null
+
+      return result.rows.map(
+        (item) =>
+          new UserDevice({
+            deviceId: item.device_id,
+            userId,
+            name: item.name,
+            type: item.type,
+            operationSystem: item.operationSystem,
+            noteEncryptionPublicKey: item.public_key_for_notes_encryption,
+          })
+      )
     } catch (err) {
       // TODO handler error
       return null

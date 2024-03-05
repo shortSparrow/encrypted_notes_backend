@@ -1,20 +1,20 @@
-import { NoteDTO, NoteDb } from "../note"
+import { NoteRequest, NoteDb } from "../note"
 
 class NoteMapper {
-  noteDtoToNoteDb = (
-    noteDto: Omit<NoteDTO, "metaData.noteGlobalId"> & {
+  noteRequestToNoteDb = (
+    noteRequest: Omit<NoteRequest, "metaData.noteGlobalId"> & {
       metaData: { noteGlobalId: string }
     }
   ): NoteDb => ({
     data: {
-      encryptedTitle: JSON.stringify(noteDto.data.title),
-      encryptedMessage: JSON.stringify(noteDto.data.message),
+      encryptedTitle: JSON.stringify(noteRequest.data.title),
+      encryptedMessage: JSON.stringify(noteRequest.data.message),
     },
     metaData: {
-      createdAt: noteDto.metaData.createdAt,
-      updatedAt: noteDto.metaData.updatedAt,
-      sendToDeviceId: noteDto.metaData.sendToDeviceId,
-      noteGlobalId: noteDto.metaData.noteGlobalId,
+      createdAt: noteRequest.metaData.createdAt,
+      updatedAt: noteRequest.metaData.updatedAt,
+      sendToDeviceId: noteRequest.metaData.sendToDeviceId,
+      noteGlobalId: noteRequest.metaData.noteGlobalId,
     },
   })
 

@@ -6,7 +6,7 @@ import {
   FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
-  UnknownError,
+  UnexpectedError,
 } from "../../entities/errors"
 import { GetNewAccessTokenUseCase } from "../../usecases/token/getNewAccessToken/getNewAccessTokenUseCase"
 
@@ -31,7 +31,7 @@ export const getNewAccessTokenController = async (
     result instanceof BadRequestError ||
     result instanceof FailedToCreateError ||
     result instanceof UnauthorizedError ||
-    result instanceof UnknownError
+    result instanceof UnexpectedError
   ) {
     return res.status(result.code).json({ message: result.message })
   }

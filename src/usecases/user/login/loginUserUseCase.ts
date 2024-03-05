@@ -5,7 +5,7 @@ import {
   FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
-  UnknownError,
+  UnexpectedError,
 } from "../../../entities/errors"
 import { comparePasswordSync } from "../../../utils/hashed/hashedPasswordSync"
 import { GenerateTokensUseCase } from "../../token/generateTokens/generateTokensUseCase"
@@ -64,7 +64,7 @@ export class LoginUserUseCase {
       return this._loginFromExistingDevice(params.deviceId, user.id)
     } catch (err) {
       console.log("Error: ", err)
-      return new UnknownError(`Unknown error: ${err}`)
+      return new UnexpectedError(`Unknown error: ${err}`)
     }
   }
 

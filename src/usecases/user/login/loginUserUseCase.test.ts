@@ -25,7 +25,11 @@ const correctParams = {
   noteEncryptionPublicKey: mockNoteEncryptionPublicKey,
 }
 
-const fakeUserDevice = new UserDevice({ deviceId: "1", userId: 1 })
+const fakeUserDevice = new UserDevice({
+  deviceId: "1",
+  userId: 1,
+  noteEncryptionPublicKey: mockNoteEncryptionPublicKey,
+})
 const fakeUser = new User({
   id: 1,
   passwordHashed: "password",

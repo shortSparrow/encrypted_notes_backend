@@ -3,7 +3,7 @@ import {
   FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
-  UnknownError,
+  UnexpectedError,
 } from "../../../entities/errors"
 import { JWK } from "../../../entities/jwk";
 
@@ -19,7 +19,7 @@ export type LoginUserResponse = Promise<
   | NotFoundError
   | BadRequestError
   | UnauthorizedError
-  | UnknownError
+  | UnexpectedError
   | FailedToCreateError
   | LoginSuccessResponse
 >

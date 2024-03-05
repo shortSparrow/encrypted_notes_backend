@@ -1,3 +1,5 @@
+import { JWK } from "./jwk"
+
 // * DeviceOperationSystem for browsers will be bull
 enum DeviceOperationSystem {
   android = "android",
@@ -20,6 +22,7 @@ type Props = {
   name?: string
   type?: DeviceTypes
   operationSystem?: DeviceOperationSystem
+  noteEncryptionPublicKey: JWK
 }
 
 export class UserDevice {
@@ -28,12 +31,31 @@ export class UserDevice {
   name?: string
   type?: DeviceTypes
   operationSystem?: DeviceOperationSystem
+  noteEncryptionPublicKey: JWK
 
-  constructor({ deviceId, userId, name, type, operationSystem }: Props) {
+  constructor({
+    deviceId,
+    userId,
+    name,
+    type,
+    operationSystem,
+    noteEncryptionPublicKey,
+  }: Props) {
     this.deviceId = deviceId
     this.userId = userId
     this.name = name
     this.type = type
     this.operationSystem = operationSystem
+    this.noteEncryptionPublicKey = noteEncryptionPublicKey
   }
+}
+
+
+export type UserDeviceResponse = {
+  deviceId: string
+  userId: number
+  name: string | null
+  type: DeviceTypes | null
+  operationSystem: DeviceOperationSystem | null
+  noteEncryptionPublicKey: JWK
 }

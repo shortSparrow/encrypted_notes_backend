@@ -18,9 +18,9 @@ export class ConflictError extends ResponseError {
   }
 }
 
-export class UnknownError extends ResponseError {
+export class UnexpectedError extends ResponseError {
   constructor(message?: string, code = 520) {
-    super(code, message)
+    super(code, (message = "Unexpected error"))
   }
 }
 

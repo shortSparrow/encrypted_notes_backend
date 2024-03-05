@@ -5,7 +5,7 @@ import {
   FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
-  UnknownError,
+  UnexpectedError,
 } from "../../../entities/errors"
 import { injectable } from "tsyringe"
 import { RefreshTokenRepository } from "../../../repositories/token.repository"
@@ -83,7 +83,7 @@ export class GetNewAccessTokenUseCase {
         )
       })
     } catch (err) {
-      return new UnknownError("Unexpected error")
+      return new UnexpectedError()
     }
   }
 

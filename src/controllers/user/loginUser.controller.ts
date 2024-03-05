@@ -7,7 +7,7 @@ import {
   FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
-  UnknownError,
+  UnexpectedError,
 } from "../../entities/errors"
 
 export const loginController = async (req: Request, res: Response) => {
@@ -32,7 +32,7 @@ export const loginController = async (req: Request, res: Response) => {
     return res.status(result.code).json({ message: result.message })
   }
 
-  if (result instanceof UnknownError) {
+  if (result instanceof UnexpectedError) {
     return res.status(520).json({ message: "Unknown error happened" })
   }
 

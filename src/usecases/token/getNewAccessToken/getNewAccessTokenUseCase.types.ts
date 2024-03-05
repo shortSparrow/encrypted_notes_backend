@@ -3,7 +3,7 @@ import {
   FailedToCreateError,
   NotFoundError,
   UnauthorizedError,
-  UnknownError,
+  UnexpectedError,
 } from "../../../entities/errors"
 
 export type ReplaceExpiredAccessTokenResult = Promise<
@@ -11,6 +11,6 @@ export type ReplaceExpiredAccessTokenResult = Promise<
   | NotFoundError
   | UnauthorizedError
   | FailedToCreateError
-  | UnknownError
+  | UnexpectedError
   | { refreshToken: string; accessToken: string }
 >

@@ -15,9 +15,14 @@ import { User } from "../../../entities/user"
 import { UserDevice } from "../../../entities/userDevice"
 import { RefreshTokenRepository } from "../../../repositories/token.repository"
 import { AddAndDeleteRefreshToken } from "../addAndDeleteRefreshToken/addAndDeleteRefreshTokenUseCase"
+import { mockNoteEncryptionPublicKey } from "../../../__mock__/mockEncryption"
 
 const mockUser = new User({ id: 1, phone: "1111", passwordHashed: "password" })
-const mockUserDevice = new UserDevice({ userId: 1, deviceId: "1" })
+const mockUserDevice = new UserDevice({
+  userId: 1,
+  deviceId: "1",
+  noteEncryptionPublicKey: mockNoteEncryptionPublicKey,
+})
 
 const mockGetUserById = jest.fn()
 const mockGtDeviceByDeviceId = jest.fn()

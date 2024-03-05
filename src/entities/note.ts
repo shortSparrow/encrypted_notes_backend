@@ -1,4 +1,4 @@
-export type NoteDTO = {
+export type NoteRequest = {
   data: {
     title: {
       cipherText: number[]

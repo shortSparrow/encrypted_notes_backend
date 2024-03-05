@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe"
-import { NoteDTO } from "../../entities/note"
+import { NoteRequest } from "../../entities/note"
 import { NotesRepository } from "../../repositories/notes.repository"
 import { noteMapper } from "../../entities/mappers/note"
 import { randomUUID } from "crypto"
@@ -11,7 +11,7 @@ import { AddNewNotesResult } from "./createNewNotesUsecase.type"
 export class CreateNewNotesUseCase {
   constructor(private _notesRepository: NotesRepository) {}
 
-  addNewNotes = async (notes: NoteDTO[]): AddNewNotesResult => {
+  addNewNotes = async (notes: NoteRequest[]): AddNewNotesResult => {
     const isError = this._isParamsValid(notes)
 
     if (isError) {
@@ -26,7 +26,7 @@ export class CreateNewNotesUseCase {
           ...note,
           metaData: { ...note.metaData, noteGlobalId },
         }
-        const noteForDb = noteMapper.noteDtoToNoteDb(noteWithGlobalId)
+        const noteForDb = noteMapper.noteRequestToNoteDb(noteWithGlobalId)
         const result = await this._notesRepository.addNewNote(noteForDb)
 
         return {

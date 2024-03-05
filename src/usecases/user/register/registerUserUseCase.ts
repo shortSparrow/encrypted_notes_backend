@@ -5,7 +5,7 @@ import {
   BadRequestError,
   ConflictError,
   FailedToCreateError,
-  UnknownError,
+  UnexpectedError,
 } from "../../../entities/errors"
 import {
   RegisterUserProps,
@@ -60,7 +60,7 @@ export class RegisterUserUseCase {
       // TODO handle different cases
 
       console.log("Error: ", err)
-      return new UnknownError(`Unknown error: ${err}`)
+      return new UnexpectedError(`Unknown error: ${err}`)
     }
   }
 }
