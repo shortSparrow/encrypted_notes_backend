@@ -7,7 +7,7 @@ import { TableNames } from "../database/constants"
 export class NotesRepository {
   constructor() {}
 
-  addNewNote = async (note: NoteDb): Promise<string | null> => {
+  addNewNote = async (note: NoteDb): Promise<number | null> => {
     try {
       const {
         data: { encryptedTitle, encryptedMessage },

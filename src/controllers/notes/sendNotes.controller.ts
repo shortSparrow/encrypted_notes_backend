@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { container } from "tsyringe"
-import { CreateNewNotesUseCase } from "../../usecases/notes/createNewNotesUsecase"
+import { CreateNewNotesUseCase } from "../../usecases/notes/createNewNotes/createNewNotesUsecase"
 import { BadRequestError } from "../../entities/errors"
 
 // Спотаку роблю ьез auth middleware, а потфм додаю і тестую вже з токенами
