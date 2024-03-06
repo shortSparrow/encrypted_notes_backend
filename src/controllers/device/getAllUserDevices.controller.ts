@@ -7,10 +7,11 @@ export const getAllUserDevicesController = async (
   req: Request,
   res: Response
 ) => {
+  const userId = req.verifiedToken?.userId as number
   const getAllUserDevicesUseCase = container.resolve(GetAllUserDevicesUseCase)
 
   const userDevicesResponse =
-    await getAllUserDevicesUseCase.getAllUserDevices(1)
+    await getAllUserDevicesUseCase.getAllUserDevices(userId)
 
   if (userDevicesResponse instanceof UnexpectedError) {
     return res
