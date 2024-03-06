@@ -6,12 +6,19 @@ import { randomUUID } from "crypto"
 import { createNoteValidationSchema } from "../../../extensions/validation/notes/notes"
 import { BadRequestError, UnexpectedError } from "../../../entities/errors"
 import { AddNewNotesResult } from "./createNewNotesUsecase.type"
+import { DeviceRepository } from "../../../repositories/device.repository"
 
 @injectable()
 export class CreateNewNotesUseCase {
-  constructor(private _notesRepository: NotesRepository) {}
+  constructor(
+    private _notesRepository: NotesRepository,
+    private _deviceRepository: DeviceRepository
+  ) {}
 
-  addNewNotes = async (notes: NoteRequest[]): AddNewNotesResult => {
+  addNewNotes = async (
+    userId: number,
+    notes: NoteRequest[]
+  ): AddNewNotesResult => {
     try {
       const isError = this._isParamsValid(notes)
 
@@ -23,12 +30,29 @@ export class CreateNewNotesUseCase {
 
       const result = await Promise.all(
         notes.map(async (note) => {
+          const recipientDevice =
+            await this._deviceRepository.getDeviceByDeviceId({
+              deviceId: note.metaData.sendToDeviceId,
+              userId,
+            })
+          const isRecipientExist = recipientDevice !== null
+
+          if (!isRecipientExist) {
+            return {
+              deviceId: note.metaData.sendToDeviceId,
+              isSuccess: false,
+            }
+          }
+
           const noteWithGlobalId = {
             ...note,
             metaData: { ...note.metaData, noteGlobalId },
           }
           const noteForDb = noteMapper.noteRequestToNoteDb(noteWithGlobalId)
-          const result = await this._notesRepository.addNewNote(noteForDb)
+          const result = await this._notesRepository.addNewNote(
+            userId,
+            noteForDb
+          )
 
           return {
             deviceId: note.metaData.sendToDeviceId,

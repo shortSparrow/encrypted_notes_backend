@@ -7,14 +7,14 @@ import { TableNames } from "../database/constants"
 export class NotesRepository {
   constructor() {}
 
-  addNewNote = async (note: NoteDb): Promise<number | null> => {
+  addNewNote = async (userId: number, note: NoteDb): Promise<number | null> => {
     try {
       const {
         data: { encryptedTitle, encryptedMessage },
         metaData: { createdAt, updatedAt, sendToDeviceId, noteGlobalId },
       } = note
       const result = await query(
-        `INSERT INTO ${TableNames.NOTES} (encrypted_title, encrypted_message, created_at, updated_at, send_to_device_id, note_global_id) VALUES($1, $2, $3, $4, $5, $6) RETURNING id`,
+        `INSERT INTO ${TableNames.NOTES} (encrypted_title, encrypted_message, created_at, updated_at, send_to_device_id, note_global_id, user_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
         [
           encryptedTitle,
           encryptedMessage,
@@ -22,6 +22,7 @@ export class NotesRepository {
           updatedAt,
           sendToDeviceId,
           noteGlobalId,
+          userId,
         ]
       )
 

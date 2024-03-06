@@ -22,6 +22,6 @@ export const migrateFrom0To1 = async () => {
   )
 
   await dbClient.query(
-    `CREATE TABLE IF NOT EXISTS ${TableNames.NOTES} (id SERIAL PRIMARY KEY, encrypted_title TEXT, encrypted_message TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, send_to_device_id TEXT NOT NULL, note_global_id TEXT NOT NULL);`
+    `CREATE TABLE IF NOT EXISTS ${TableNames.NOTES} (id SERIAL PRIMARY KEY, encrypted_title TEXT, encrypted_message TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, send_to_device_id TEXT NOT NULL, note_global_id TEXT NOT NULL, user_id SERIAL NOT  NULL);`
   )
 }
