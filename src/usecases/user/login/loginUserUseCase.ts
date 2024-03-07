@@ -99,6 +99,7 @@ export class LoginUserUseCase {
     return {
       accessToken: newDeviceResponse.accessToken,
       refreshToken: newDeviceResponse.refreshToken,
+      userId,
     }
   }
 
@@ -135,6 +136,6 @@ export class LoginUserUseCase {
       return addedTokenResult
     }
 
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken, userId }
   }
 }

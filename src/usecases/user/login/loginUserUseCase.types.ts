@@ -5,9 +5,13 @@ import {
   UnauthorizedError,
   UnexpectedError,
 } from "../../../entities/errors"
-import { JWK } from "../../../entities/jwk";
+import { JWK } from "../../../entities/jwk"
 
-export type LoginSuccessResponse = { accessToken: string; refreshToken: string }
+export type LoginSuccessResponse = {
+  accessToken: string
+  refreshToken: string
+  userId: number
+}
 export type LoginUserProps = {
   phone: string
   password: string

@@ -27,7 +27,7 @@ export const authentication = async (
       }
 
       const decodedToken = decoded as AuthToken
-      if (!decodedToken.userId) {
+      if (!decodedToken.userId || !decodedToken.deviceId) {
         return res.status(402).send("Token invalid")
       }
 

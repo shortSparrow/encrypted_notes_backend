@@ -55,5 +55,6 @@ export const registerController = async (req: Request, res: Response) => {
   return res.status(200).json({
     accessToken: responseRegisterDevice.accessToken,
     refreshToken: responseRegisterDevice.refreshToken,
+    userId: responseRegisterUser.id
   })
 }

@@ -7,7 +7,7 @@ export const sendNotesController = async (req: Request, res: Response) => {
   const createNewNotesUseCase = container.resolve(CreateNewNotesUseCase)
   const userId = req.verifiedToken?.userId as number
 
-  const result = await createNewNotesUseCase.addNewNotes(userId, req.body.data)
+  const result = await createNewNotesUseCase.addNewNotes(userId, req.body)
 
   if (result instanceof BadRequestError) {
     return res.status(result.code).json({ message: result.message })

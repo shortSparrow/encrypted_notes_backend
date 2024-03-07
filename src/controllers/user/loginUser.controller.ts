@@ -39,5 +39,6 @@ export const loginController = async (req: Request, res: Response) => {
   return res.status(200).send({
     accessToken: result.accessToken,
     refreshToken: result.refreshToken,
+    userId: result.userId
   })
 }

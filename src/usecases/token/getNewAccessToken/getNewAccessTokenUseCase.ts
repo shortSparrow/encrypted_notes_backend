@@ -14,7 +14,6 @@ import { GenerateTokensUseCase } from "../generateTokens/generateTokensUseCase"
 import { ReplaceExpiredAccessTokenResult } from "./getNewAccessTokenUseCase.types"
 import { DeviceRepository } from "../../../repositories/device.repository"
 import { UserDeviceId } from "../../../.."
-import { ref } from "joi"
 import { AddAndDeleteRefreshToken } from "../addAndDeleteRefreshToken/addAndDeleteRefreshTokenUseCase"
 
 @injectable()
