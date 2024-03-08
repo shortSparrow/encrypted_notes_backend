@@ -1,5 +1,4 @@
 import { injectable } from "tsyringe"
-import { NoteRequest } from "../../../entities/note"
 import { NotesRepository } from "../../../repositories/notes.repository"
 import { editNoteValidationSchema } from "../../../extensions/validation/notes/notes"
 import { BadRequestError, UnexpectedError } from "../../../entities/errors"
@@ -43,7 +42,7 @@ export class EditNewNotesUseCase {
             }
           }
 
-          const noteForDb = noteMapper.noteRequestToNoteDb(note)
+          const noteForDb = noteMapper.noteRequestToNoteForDb(note)
           const result = await this._notesRepository.editNote(userId, noteForDb)
 
           return {

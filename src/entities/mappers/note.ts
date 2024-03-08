@@ -1,24 +1,41 @@
-import { NoteRequest, NoteDb } from "../note"
+import { NoteRequest, NoteForDb as NoteForDb, NoteResponse, Note, EncryptedData } from "../note"
 
 class NoteMapper {
-  noteRequestToNoteDb = (
+  noteRequestToNoteForDb = (
     noteRequest: Omit<NoteRequest, "metaData.noteGlobalId"> & {
       metaData: { noteGlobalId: string }
     }
-  ): NoteDb => ({
-    data: {
-      encryptedTitle: JSON.stringify(noteRequest.data.title),
-      encryptedMessage: JSON.stringify(noteRequest.data.message),
-    },
-    metaData: {
-      createdAt: noteRequest.metaData.createdAt,
-      updatedAt: noteRequest.metaData.updatedAt,
-      sendToDeviceId: noteRequest.metaData.sendToDeviceId,
-      noteGlobalId: noteRequest.metaData.noteGlobalId,
-    },
+  ): NoteForDb => ({
+    encryptedTitle: JSON.stringify(noteRequest.data.title),
+    encryptedMessage: JSON.stringify(noteRequest.data.message),
+    createdAt: noteRequest.metaData.createdAt,
+    updatedAt: noteRequest.metaData.updatedAt,
+    sendToDeviceId: noteRequest.metaData.sendToDeviceId,
+    noteGlobalId: noteRequest.metaData.noteGlobalId,
   })
 
-  //   noteDbToNoteDto = (noteDto: NoteDb): NoteDTO => ({})
+  noteDbToNote = (noteDbMap: any): Note => ({
+    title: JSON.parse(noteDbMap.encrypted_title) as EncryptedData,
+    message: JSON.parse(noteDbMap.encrypted_title) as EncryptedData,
+    createdAt: noteDbMap.created_at,
+    updatedAt: noteDbMap.updated_at,
+    sendToDeviceId: noteDbMap.send_to_device_id,
+    noteGlobalId: noteDbMap.note_global_id,
+    id: noteDbMap.id,
+  })
+
+  noteToNoteResponse = (note: Note): NoteResponse => ({
+    data: {
+      title: note.title,
+      message: note.message,
+    },
+    metaData: {
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
+      sendToDeviceId: note.sendToDeviceId,
+      noteGlobalId: note.noteGlobalId,
+    },
+  })
 }
 
 export const noteMapper = new NoteMapper()

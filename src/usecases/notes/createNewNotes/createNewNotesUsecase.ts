@@ -40,6 +40,7 @@ export class CreateNewNotesUseCase {
           if (!isRecipientExist) {
             return {
               deviceId: note.metaData.sendToDeviceId,
+              noteGlobalId: noteGlobalId,
               isSuccess: false,
             }
           }
@@ -48,7 +49,7 @@ export class CreateNewNotesUseCase {
             ...note,
             metaData: { ...note.metaData, noteGlobalId },
           }
-          const noteForDb = noteMapper.noteRequestToNoteDb(noteWithGlobalId)
+          const noteForDb = noteMapper.noteRequestToNoteForDb(noteWithGlobalId)
           const result = await this._notesRepository.addNewNote(
             userId,
             noteForDb
@@ -56,15 +57,13 @@ export class CreateNewNotesUseCase {
 
           return {
             deviceId: note.metaData.sendToDeviceId,
+            noteGlobalId: noteGlobalId,
             isSuccess: result !== null,
           }
         })
       )
 
-      return {
-        noteGlobalId,
-        resultInfo: result,
-      }
+      return result
     } catch (err) {
       return new UnexpectedError()
     }

@@ -1,10 +1,10 @@
 import { BadRequestError, UnexpectedError } from "../../../entities/errors"
 
 export type AddNewNotesSuccess = {
+  deviceId: string
+  isSuccess: boolean
   noteGlobalId: string
-  resultInfo: {
-    deviceId: string
-    isSuccess: boolean
-  }[]
-}
-export type AddNewNotesResult = Promise<BadRequestError | UnexpectedError | AddNewNotesSuccess>
+}[]
+export type AddNewNotesResult = Promise<
+  BadRequestError | UnexpectedError | AddNewNotesSuccess
+>

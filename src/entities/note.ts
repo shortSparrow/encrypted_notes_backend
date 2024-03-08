@@ -1,15 +1,23 @@
+export type EncryptedData = {
+  cipherText: number[]
+  nonce: number[]
+  mac: number[]
+}
+
+export type Note = {
+  title: EncryptedData
+  message: EncryptedData
+  createdAt: string
+  updatedAt: string
+  sendToDeviceId: string
+  noteGlobalId: string
+  id: number
+}
+
 export type NoteRequest = {
   data: {
-    title: {
-      cipherText: number[]
-      nonce: number[]
-      mac: number[]
-    }
-    message: {
-      cipherText: number[]
-      nonce: number[]
-      mac: number[]
-    }
+    title: EncryptedData
+    message: EncryptedData
   }
   metaData: {
     createdAt: string
@@ -19,10 +27,10 @@ export type NoteRequest = {
   }
 }
 
-export type NoteDb = {
+export type NoteResponse = {
   data: {
-    encryptedTitle: string
-    encryptedMessage: string
+    title: EncryptedData
+    message: EncryptedData
   }
   metaData: {
     createdAt: string
@@ -30,4 +38,13 @@ export type NoteDb = {
     sendToDeviceId: string
     noteGlobalId: string
   }
+}
+
+export type NoteForDb = {
+  encryptedTitle: string
+  encryptedMessage: string
+  createdAt: string
+  updatedAt: string
+  sendToDeviceId: string
+  noteGlobalId: string
 }
