@@ -31,4 +31,30 @@ export class NotesRepository {
       return null
     }
   }
+
+  editNote = async (userId: number, note: NoteDb): Promise<number | null> => {
+    try {
+      const {
+        data: { encryptedTitle, encryptedMessage },
+        metaData: { createdAt, updatedAt, sendToDeviceId, noteGlobalId },
+      } = note
+      console.log("noteGlobalId: ", noteGlobalId)
+      const result = await query(
+        `UPDATE ${TableNames.NOTES} SET encrypted_title=$1, encrypted_message=$2, created_at=$3, updated_at=$4 WHERE note_global_id=$5 AND send_to_device_id=$6 AND user_id=$7 RETURNING id`,
+        [
+          encryptedTitle,
+          encryptedMessage,
+          createdAt,
+          updatedAt,
+          noteGlobalId,
+          sendToDeviceId,
+          userId,
+        ]
+      )
+      return result.rows[0]?.id ?? null
+    } catch (e) {
+      console.log('Err: ', e)
+      return null
+    }
+  }
 }
