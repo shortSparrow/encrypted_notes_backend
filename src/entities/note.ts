@@ -5,13 +5,14 @@ export type EncryptedData = {
 }
 
 export type Note = {
+  id: number
   title: EncryptedData
   message: EncryptedData
   createdAt: string
   updatedAt: string
   sendToDeviceId: string
   noteGlobalId: string
-  id: number
+  sendFromDeviceId: string
 }
 
 export type NoteRequest = {
@@ -37,6 +38,8 @@ export type NoteResponse = {
     updatedAt: string
     sendToDeviceId: string
     noteGlobalId: string
+    sendFromDeviceId: string
+    syncedWithDevices: string[]
   }
 }
 
@@ -47,4 +50,5 @@ export type NoteForDb = {
   updatedAt: string
   sendToDeviceId: string
   noteGlobalId: string
+  sendFromDeviceId: string
 }

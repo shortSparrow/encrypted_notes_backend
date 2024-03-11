@@ -1,13 +1,18 @@
 import { Request, Response } from "express"
 import { container } from "tsyringe"
 import { BadRequestError, UnexpectedError } from "../../entities/errors"
-import { EditNewNotesUseCase } from "../../usecases/notes/editNewNotes/editNewNotesUsecase"
+import { EditNotesUseCase } from "../../usecases/notes/editNotes/editNotesUsecase"
 
 export const editNotesController = async (req: Request, res: Response) => {
   const userId = req.verifiedToken?.userId as number
-  const editNewNotesUseCase = container.resolve(EditNewNotesUseCase)
+  const deviceId = req.verifiedToken?.deviceId as string
+  const editNewNotesUseCase = container.resolve(EditNotesUseCase)
 
-  const result = await editNewNotesUseCase.editNotes(userId, req.body)
+  const result = await editNewNotesUseCase.editNotes({
+    sendFromDeviceId: deviceId,
+    userId,
+    updatedNotes: req.body,
+  })
 
   if (result instanceof BadRequestError || result instanceof UnexpectedError) {
     return res.status(result.code).json({ message: result.message })

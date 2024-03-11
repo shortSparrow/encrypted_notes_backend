@@ -3,20 +3,21 @@ import { NotesRepository } from "../../../repositories/notes.repository"
 import { editNoteValidationSchema } from "../../../extensions/validation/notes/notes"
 import { BadRequestError, UnexpectedError } from "../../../entities/errors"
 import { DeviceRepository } from "../../../repositories/device.repository"
-import { EditNotesRequest, EditNotesResult } from "./editNewNotesUsecase.type"
+import { EditNotesProps, EditNotesResult } from "./editNotesUsecase.type"
 import { noteMapper } from "../../../entities/mappers/note"
 
 @injectable()
-export class EditNewNotesUseCase {
+export class EditNotesUseCase {
   constructor(
     private _notesRepository: NotesRepository,
     private _deviceRepository: DeviceRepository
   ) {}
 
-  editNotes = async (
-    userId: number,
-    updatedNotes: EditNotesRequest[]
-  ): EditNotesResult => {
+  editNotes = async ({
+    updatedNotes,
+    userId,
+    sendFromDeviceId,
+  }: EditNotesProps): EditNotesResult => {
     try {
       const isError = this._isParamsValid(updatedNotes)
 
@@ -36,17 +37,24 @@ export class EditNewNotesUseCase {
 
           if (!isRecipientExist) {
             return {
-              deviceId: note.metaData.sendToDeviceId,
+              sendToDeviceId: note.metaData.sendToDeviceId,
               noteGlobalId: note.metaData.noteGlobalId,
               isSuccess: false,
             }
           }
 
-          const noteForDb = noteMapper.noteRequestToNoteForDb(note)
+          const noteForDb = noteMapper.noteRequestToNoteForDb(
+            {
+              ...note,
+              metaData: { ...note.metaData },
+            },
+            sendFromDeviceId
+          )
+
           const result = await this._notesRepository.editNote(userId, noteForDb)
 
           return {
-            deviceId: note.metaData.sendToDeviceId,
+            sendToDeviceId: note.metaData.sendToDeviceId,
             noteGlobalId: note.metaData.noteGlobalId,
             isSuccess: result !== null,
           }

@@ -9,8 +9,7 @@ export class GetAllUserDevicesUseCase {
   constructor(private _deviceRepository: DeviceRepository) {}
 
   getAllUserDevices = async (
-    userId: number,
-    deviceId: string
+    userId: number
   ): Promise<GetAllUserDevicesResponse> => {
     try {
       const devices = await this._deviceRepository.getAllUserDevices(userId)
@@ -19,11 +18,9 @@ export class GetAllUserDevicesUseCase {
         return new UnexpectedError()
       }
 
-      return devices
-        .filter((item) => item.deviceId !== deviceId) // exclude device from what request come
-        .map((deviceItem) =>
-          userDeviceMapper.deviceToResponseDevice(deviceItem)
-        )
+      return devices.map((deviceItem) =>
+        userDeviceMapper.deviceToResponseDevice(deviceItem)
+      )
     } catch (err) {
       return new UnexpectedError()
     }

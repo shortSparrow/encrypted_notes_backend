@@ -6,10 +6,16 @@ export type EditNotesRequest = Omit<NoteRequest, "metaData.noteGlobalId"> & {
 }
 
 export type EditNotesSuccess = {
-  deviceId: string
+  sendToDeviceId: string
   isSuccess: boolean
   noteGlobalId: string
 }[]
+
+export type EditNotesProps = {
+  sendFromDeviceId: string,
+  userId: number,
+  updatedNotes: EditNotesRequest[]
+}
 
 export type EditNotesResult = Promise<
   BadRequestError | UnexpectedError | EditNotesSuccess

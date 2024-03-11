@@ -9,13 +9,25 @@ export class GetAllNotesUsecase {
   constructor(private _notesRepository: NotesRepository) {}
 
   getAllNotes = async (userId: number, deviceId: string): GetAllNotesResult => {
-    console.log('deviceId: ', deviceId)
     try {
       const res = await this._notesRepository.getAllNotes(userId, deviceId)
 
-      return res.map((note) => noteMapper.noteToNoteResponse(note))
+      const data = await Promise.all(
+        res.map(async (item) => {
+          const syncedNotes = await this._notesRepository.getNotesByGlobalId(
+            userId,
+            item.noteGlobalId
+          )
+          const syncedWithDeviceId = syncedNotes.map(
+            (item) => item.sendToDeviceId
+          )
+
+          return noteMapper.noteToNoteResponse(item, syncedWithDeviceId)
+        })
+      )
+
+      return data
     } catch (err) {
-      console.log("Err: ", err)
       return new UnexpectedError()
     }
   }

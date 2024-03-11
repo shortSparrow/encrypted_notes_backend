@@ -1,11 +1,13 @@
 import { injectable } from "tsyringe"
-import { NoteRequest } from "../../../entities/note"
 import { NotesRepository } from "../../../repositories/notes.repository"
 import { noteMapper } from "../../../entities/mappers/note"
 import { randomUUID } from "crypto"
 import { createNoteValidationSchema } from "../../../extensions/validation/notes/notes"
 import { BadRequestError, UnexpectedError } from "../../../entities/errors"
-import { AddNewNotesResult } from "./createNewNotesUsecase.type"
+import {
+  AddNewNotesProps,
+  AddNewNotesResult,
+} from "./createNewNotesUsecase.type"
 import { DeviceRepository } from "../../../repositories/device.repository"
 
 @injectable()
@@ -15,10 +17,11 @@ export class CreateNewNotesUseCase {
     private _deviceRepository: DeviceRepository
   ) {}
 
-  addNewNotes = async (
-    userId: number,
-    notes: NoteRequest[]
-  ): AddNewNotesResult => {
+  addNewNotes = async ({
+    notes,
+    userId,
+    sendFromDeviceId,
+  }: AddNewNotesProps): AddNewNotesResult => {
     try {
       const isError = this._isParamsValid(notes)
 
@@ -39,7 +42,7 @@ export class CreateNewNotesUseCase {
 
           if (!isRecipientExist) {
             return {
-              deviceId: note.metaData.sendToDeviceId,
+              sendToDeviceId: note.metaData.sendToDeviceId,
               noteGlobalId: noteGlobalId,
               isSuccess: false,
             }
@@ -49,14 +52,14 @@ export class CreateNewNotesUseCase {
             ...note,
             metaData: { ...note.metaData, noteGlobalId },
           }
-          const noteForDb = noteMapper.noteRequestToNoteForDb(noteWithGlobalId)
+          const noteForDb = noteMapper.noteRequestToNoteForDb(noteWithGlobalId, sendFromDeviceId)
           const result = await this._notesRepository.addNewNote(
             userId,
             noteForDb
           )
 
           return {
-            deviceId: note.metaData.sendToDeviceId,
+            sendToDeviceId: note.metaData.sendToDeviceId,
             noteGlobalId: noteGlobalId,
             isSuccess: result !== null,
           }

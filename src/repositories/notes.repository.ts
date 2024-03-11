@@ -8,7 +8,10 @@ import { noteMapper } from "../entities/mappers/note"
 export class NotesRepository {
   constructor() {}
 
-  addNewNote = async (userId: number, note: NoteForDb): Promise<number | null> => {
+  addNewNote = async (
+    userId: number,
+    note: NoteForDb
+  ): Promise<number | null> => {
     try {
       const {
         encryptedTitle,
@@ -17,9 +20,11 @@ export class NotesRepository {
         updatedAt,
         sendToDeviceId,
         noteGlobalId,
+        sendFromDeviceId,
       } = note
+
       const result = await query(
-        `INSERT INTO ${TableNames.NOTES} (encrypted_title, encrypted_message, created_at, updated_at, send_to_device_id, note_global_id, user_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+        `INSERT INTO ${TableNames.NOTES} (encrypted_title, encrypted_message, created_at, updated_at, send_to_device_id, note_global_id, user_id, send_from_device_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
         [
           encryptedTitle,
           encryptedMessage,
@@ -28,6 +33,7 @@ export class NotesRepository {
           sendToDeviceId,
           noteGlobalId,
           userId,
+          sendFromDeviceId,
         ]
       )
 
@@ -37,7 +43,10 @@ export class NotesRepository {
     }
   }
 
-  editNote = async (userId: number, note: NoteForDb): Promise<number | null> => {
+  editNote = async (
+    userId: number,
+    note: NoteForDb
+  ): Promise<null | number> => {
     try {
       const {
         encryptedTitle,
@@ -46,20 +55,29 @@ export class NotesRepository {
         updatedAt,
         sendToDeviceId,
         noteGlobalId,
+        sendFromDeviceId,
       } = note
+
       const result = await query(
-        `UPDATE ${TableNames.NOTES} SET encrypted_title=$1, encrypted_message=$2, created_at=$3, updated_at=$4 WHERE note_global_id=$5 AND send_to_device_id=$6 AND user_id=$7 RETURNING id`,
+        `UPDATE ${TableNames.NOTES} SET encrypted_title=$1, encrypted_message=$2, created_at=$3, updated_at=$4, send_to_device_id=$5, send_from_device_id=$6 WHERE note_global_id=$7 AND user_id=$8 AND send_to_device_id=$9 RETURNING id`,
         [
           encryptedTitle,
           encryptedMessage,
           createdAt,
           updatedAt,
-          noteGlobalId,
           sendToDeviceId,
+          sendFromDeviceId,
+          noteGlobalId,
           userId,
+          sendToDeviceId,
         ]
       )
-      return result.rows[0]?.id ?? null
+
+      const data = result.rows[0]
+
+      if (!data) return null
+
+      return data.id
     } catch (e) {
       console.log("Err: ", e)
       return null
@@ -71,6 +89,23 @@ export class NotesRepository {
       const result = await query(
         `SELECT * FROM ${TableNames.NOTES} WHERE user_id=$1 AND send_to_device_id=$2`,
         [userId, deviceId]
+      )
+
+      return result.rows.map((item) => noteMapper.noteDbToNote(item))
+    } catch (e) {
+      console.log("Err: ", e)
+      return []
+    }
+  }
+
+  getNotesByGlobalId = async (
+    userId: number,
+    noteGlobalId: string
+  ): Promise<Note[]> => {
+    try {
+      const result = await query(
+        `SELECT * FROM ${TableNames.NOTES} WHERE user_id=$1 AND note_global_id=$2`,
+        [userId, noteGlobalId]
       )
 
       return result.rows.map((item) => noteMapper.noteDbToNote(item))

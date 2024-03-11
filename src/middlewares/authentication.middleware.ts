@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import jwt from "jsonwebtoken"
 import { tokenConfig } from "../config/token.config"
 import { AuthToken } from "../.."
+import { tokenValidationSchema } from "../extensions/validation/token/token"
 
 export const authentication = async (
   req: Request,
@@ -27,7 +28,8 @@ export const authentication = async (
       }
 
       const decodedToken = decoded as AuthToken
-      if (!decodedToken.userId || !decodedToken.deviceId) {
+      const validationResult = tokenValidationSchema.validate(decodedToken)
+      if (validationResult.error) {
         return res.status(402).send("Token invalid")
       }
 
