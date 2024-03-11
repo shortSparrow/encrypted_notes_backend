@@ -84,6 +84,20 @@ export class NotesRepository {
     }
   }
 
+  deleteNotes = async (userId: number, globalNoteId: string): Promise<boolean> => {
+    try {
+      const result = await query(
+        `DELETE FROM ${TableNames.NOTES} WHERE user_id=$1 AND note_global_id=$2 RETURNING id`,
+        [userId, globalNoteId]
+      )
+
+      return result.rows[0] != null
+    } catch (e) {
+      console.log("Err: ", e)
+      return false
+    }
+  }
+
   getAllNotes = async (userId: number, deviceId: string): Promise<Note[]> => {
     try {
       const result = await query(
