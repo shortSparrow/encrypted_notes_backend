@@ -6,6 +6,7 @@ import { createNoteValidationSchema } from "../../../extensions/validation/notes
 import { NotesRepository } from "../../../repositories/notes.repository"
 import { AddNewNotesSuccess } from "./createNewNotesUsecase.type"
 import { DeviceRepository } from "../../../repositories/device.repository"
+import { mockRandomUUID } from "../../../__mock__/uuid"
 
 const mockInvalidNote: NoteRequest = {
   data: {
@@ -70,17 +71,25 @@ describe("createNewNotesUsecase", () => {
   it("Should return error on invalid params", async () => {
     const createNewNotesUseCase = container.resolve(CreateNewNotesUseCase)
 
-    const result1 = await createNewNotesUseCase.addNewNotes(1, [])
+    const result1 = await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [],
+      sendFromDeviceId: "device_id_1",
+    })
     expect(result1).toBeInstanceOf(BadRequestError)
 
-    const result2 = await createNewNotesUseCase.addNewNotes(1, [
-      {} as NoteRequest,
-    ])
+    const result2 = await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [{} as NoteRequest],
+      sendFromDeviceId: "device_id_1",
+    })
     expect(result2).toBeInstanceOf(BadRequestError)
 
-    const result3 = await createNewNotesUseCase.addNewNotes(1, [
-      mockInvalidNote,
-    ])
+    const result3 = await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [mockInvalidNote],
+      sendFromDeviceId: "device_id_1",
+    })
     expect(result3).toBeInstanceOf(BadRequestError)
 
     const invalidNotes = {
@@ -88,7 +97,11 @@ describe("createNewNotesUsecase", () => {
       metaData: { ...mockValidNote.metaData, noteGlobalId: 1 },
     } as any
 
-    const result4 = await createNewNotesUseCase.addNewNotes(1, [invalidNotes])
+    const result4 = await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [invalidNotes],
+      sendFromDeviceId: "device_id_1",
+    })
     expect(result4).toBeInstanceOf(BadRequestError)
   })
 
@@ -101,7 +114,11 @@ describe("createNewNotesUsecase", () => {
 
     const createNewNotesUseCase = container.resolve(CreateNewNotesUseCase)
 
-    const result = await createNewNotesUseCase.addNewNotes(1, [])
+    const result = await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [],
+      sendFromDeviceId: "device_id_1",
+    })
     expect(result).toBeInstanceOf(UnexpectedError)
     spy.mockRestore()
   })
@@ -125,22 +142,22 @@ describe("createNewNotesUsecase", () => {
 
     mockGetDeviceByDeviceId.mockImplementation(() => 10) // return random id - device with device_id=sendToDeviceId exist
 
-    const result = (await createNewNotesUseCase.addNewNotes(1, [
-      note1,
-      note2,
-    ])) as AddNewNotesSuccess
+    const result = (await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [note1, note2],
+      sendFromDeviceId: "device_id_1",
+    })) as AddNewNotesSuccess
 
-    expect(typeof result.noteGlobalId).toBe("string")
-    expect(result.noteGlobalId.length).toBe(36)
-
-    expect(result.resultInfo.length).toBe(2)
-    expect(result.resultInfo[0]).toEqual({
-      deviceId: note1.metaData.sendToDeviceId,
+    expect(result.length).toBe(2)
+    expect(result[0]).toEqual({
+      sendToDeviceId: note1.metaData.sendToDeviceId,
       isSuccess: true,
+      noteGlobalId: mockRandomUUID,
     })
-    expect(result.resultInfo[1]).toEqual({
-      deviceId: note2.metaData.sendToDeviceId,
+    expect(result[1]).toEqual({
+      sendToDeviceId: note2.metaData.sendToDeviceId,
       isSuccess: false,
+      noteGlobalId: mockRandomUUID,
     })
   })
 
@@ -165,22 +182,22 @@ describe("createNewNotesUsecase", () => {
       .mockImplementationOnce(() => null) // device with device_id=sendToDeviceId not exist
       .mockImplementationOnce(() => 10) /// return random id -> device with device_id=sendToDeviceId exist
 
-    const result = (await createNewNotesUseCase.addNewNotes(1, [
-      note1,
-      note2,
-    ])) as AddNewNotesSuccess
+    const result = (await createNewNotesUseCase.addNewNotes({
+      userId: 1,
+      notes: [note1, note2],
+      sendFromDeviceId: "1",
+    })) as AddNewNotesSuccess
 
-    expect(typeof result.noteGlobalId).toBe("string")
-    expect(result.noteGlobalId.length).toBe(36)
-
-    expect(result.resultInfo.length).toBe(2)
-    expect(result.resultInfo[0]).toEqual({
-      deviceId: note1.metaData.sendToDeviceId,
+    expect(result.length).toBe(2)
+    expect(result[0]).toEqual({
+      sendToDeviceId: note1.metaData.sendToDeviceId,
       isSuccess: false,
+      noteGlobalId: mockRandomUUID,
     })
-    expect(result.resultInfo[1]).toEqual({
-      deviceId: note2.metaData.sendToDeviceId,
+    expect(result[1]).toEqual({
+      sendToDeviceId: note2.metaData.sendToDeviceId,
       isSuccess: true,
+      noteGlobalId: mockRandomUUID,
     })
   })
 })

@@ -164,6 +164,7 @@ describe("LoginUserUseCase", () => {
     expect(result).toEqual({
       accessToken: "accessToken",
       refreshToken: "refreshToken",
+      userId: fakeUser.id,
     })
   })
 
@@ -184,7 +185,7 @@ describe("LoginUserUseCase", () => {
 
   it("should return access and refresh token if everything went good  ", async () => {
     const registerUserUseCase = container.resolve(LoginUserUseCase)
-    mockGetUserByPhone.mockImplementation(() => fakeUser)
+    mockGetUserByPhone.mockImplementation(() => ({ ...fakeUser, id: 2 }))
     mockComparePasswordSync.mockImplementation(() => true)
     mockGetDeviceById.mockImplementation(() => fakeUserDevice)
     mockGenerateAccessToken.mockImplementation(() => "accessToken")
@@ -197,6 +198,7 @@ describe("LoginUserUseCase", () => {
     expect(result).toEqual({
       accessToken: "accessToken",
       refreshToken: "refreshToken",
+      userId: 2,
     })
   })
 })

@@ -44,10 +44,7 @@ export class EditNotesUseCase {
           }
 
           const noteForDb = noteMapper.noteRequestToNoteForDb(
-            {
-              ...note,
-              metaData: { ...note.metaData },
-            },
+            note,
             sendFromDeviceId
           )
 

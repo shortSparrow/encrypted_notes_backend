@@ -4,7 +4,6 @@ import { DeviceRepository } from "../../../repositories/device.repository"
 import { UnexpectedError } from "../../../entities/errors"
 import {
   DeviceOperationSystem,
-  DeviceTypes,
   UserDevice,
   UserDeviceResponse,
 } from "../../../entities/userDevice"
