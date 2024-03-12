@@ -4,7 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "yarn test-unit && yarn test-e2e",
+    "test-e2e": "jest --config=jest.config.js src/e2e_tests --runInBand",
+    "test-unit": "jest src/** --testPathIgnorePatterns src/e2e_tests",
+    "test:coverage": "jest --runInBand --coverage",
     "watch": "nodemon src/server.ts",
     "start": "ts-node src/server.ts",
     "build": "tsc"
