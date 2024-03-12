@@ -1,6 +1,7 @@
 import { injectable } from "tsyringe"
 import { query } from "../utils/db/query"
 import { UserDeviceId } from "../.."
+import { TableNames } from "../database/constants"
 
 type AddNewRefreshTokenProps = {
   refreshToken: string
@@ -18,7 +19,7 @@ export class RefreshTokenRepository {
     try {
       const { refreshToken, userId, deviceId } = props
       const result = await query(
-        "INSERT into device_refresh_tokens (device_id, user_id, token) VALUES($1,$2,$3) RETURNING id",
+        `INSERT into ${TableNames.DEVICE_REFRESH_TOKENS} (device_id, user_id, token) VALUES($1,$2,$3) RETURNING id`,
         [deviceId, userId, refreshToken]
       )
       return result.rows[0]?.id ?? null
@@ -31,7 +32,7 @@ export class RefreshTokenRepository {
   getTokenByValue = async (refreshToken: string): Promise<string | null> => {
     try {
       const result = await query(
-        "SELECT token FROM device_refresh_tokens WHERE token = $1 LIMIT 1",
+        `SELECT token FROM ${TableNames.DEVICE_REFRESH_TOKENS} WHERE token = $1 LIMIT 1`,
         [refreshToken]
       )
 
@@ -48,7 +49,24 @@ export class RefreshTokenRepository {
   }: UserDeviceId): Promise<boolean> => {
     try {
       await query(
-        "DELETE FROM device_refresh_tokens WHERE user_id = $1 AND device_id = $2",
+        `DELETE FROM ${TableNames.DEVICE_REFRESH_TOKENS} WHERE user_id = $1 AND device_id = $2`,
+        [userId, deviceId]
+      )
+
+      return true
+    } catch (err) {
+      console.log("Error: ", err)
+      return false
+    }
+  }
+
+  removeDeviceRefreshToken = async (
+    userId: number,
+    deviceId: string
+  ): Promise<boolean> => {
+    try {
+      await query(
+        `DELETE FROM ${TableNames.DEVICE_REFRESH_TOKENS} WHERE user_id = $1 AND device_id = $2`,
         [userId, deviceId]
       )
 
@@ -66,7 +84,7 @@ export class RefreshTokenRepository {
   }: UserDeviceId): Promise<string | null> => {
     try {
       const result = await query(
-        "SELECT * FROM device_refresh_tokens WHERE user_id = $1 AND device_id = $2",
+        `SELECT * FROM ${TableNames.DEVICE_REFRESH_TOKENS} WHERE user_id = $1 AND device_id = $2`,
         [userId, deviceId]
       )
 

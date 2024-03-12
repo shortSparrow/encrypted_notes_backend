@@ -124,4 +124,21 @@ export class DeviceRepository {
       return null
     }
   }
+
+  removeDevice = async (
+    userId: number,
+    deviceId: string
+  ): Promise<null | number> => {
+    try {
+      const result = await query(
+        `DELETE FROM ${TableNames.DEVICES} WHERE user_id=$1 AND device_id=$2 RETURNING id`,
+        [userId, deviceId]
+      )
+
+      return result.rows[0]?.id ?? null
+    } catch (err) {
+      console.log("err: ", err)
+      return null
+    }
+  }
 }

@@ -24,7 +24,22 @@ export class NotesRepository {
       } = note
 
       const result = await query(
-        `INSERT INTO ${TableNames.NOTES} (encrypted_title, encrypted_message, created_at, updated_at, send_to_device_id, note_global_id, user_id, send_from_device_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+        `
+        INSERT INTO ${TableNames.NOTES} 
+          (
+            encrypted_title, 
+            encrypted_message, 
+            created_at, 
+            updated_at, 
+            send_to_device_id, 
+            note_global_id, 
+            user_id, 
+            send_from_device_id
+          ) 
+        VALUES
+          ($1, $2, $3, $4, $5, $6, $7, $8) 
+        RETURNING id
+        `,
         [
           encryptedTitle,
           encryptedMessage,
@@ -39,6 +54,7 @@ export class NotesRepository {
 
       return result.rows[0]?.id ?? null
     } catch (err) {
+      console.log("err: ", err)
       return null
     }
   }
@@ -59,13 +75,27 @@ export class NotesRepository {
       } = note
 
       const result = await query(
-        `UPDATE ${TableNames.NOTES} SET encrypted_title=$1, encrypted_message=$2, created_at=$3, updated_at=$4, send_to_device_id=$5, send_from_device_id=$6 WHERE note_global_id=$7 AND user_id=$8 AND send_to_device_id=$9 RETURNING id`,
+        `
+        UPDATE ${TableNames.NOTES} 
+        SET 
+          encrypted_title=$1, 
+          encrypted_message=$2, 
+          created_at=$3, 
+          updated_at=$4, 
+          send_from_device_id=$5 
+        WHERE 
+          note_global_id=$6 
+          AND 
+          user_id=$7 
+          AND 
+          send_to_device_id=$8 
+        RETURNING id
+        `,
         [
           encryptedTitle,
           encryptedMessage,
           createdAt,
           updatedAt,
-          sendToDeviceId,
           sendFromDeviceId,
           noteGlobalId,
           userId,
@@ -84,7 +114,10 @@ export class NotesRepository {
     }
   }
 
-  deleteNotes = async (userId: number, globalNoteId: string): Promise<boolean> => {
+  deleteNotes = async (
+    userId: number,
+    globalNoteId: string
+  ): Promise<boolean> => {
     try {
       const result = await query(
         `DELETE FROM ${TableNames.NOTES} WHERE user_id=$1 AND note_global_id=$2 RETURNING id`,

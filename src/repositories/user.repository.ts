@@ -1,6 +1,7 @@
 import { query } from "../utils/db/query"
 import { injectable } from "tsyringe"
 import { User } from "../entities/user"
+import { TableNames } from "../database/constants"
 
 type CreateUserProps = {
   phone: string
@@ -13,7 +14,7 @@ export class UserRepository {
     try {
       const { phone, passwordHashed } = props
       const result = await query(
-        "INSERT INTO users (phone, password_hashed) VALUES($1, $2) RETURNING id",
+        `INSERT INTO ${TableNames.USERS} (phone, password_hashed) VALUES($1, $2) RETURNING id`,
         [phone, passwordHashed]
       )
 
@@ -27,7 +28,7 @@ export class UserRepository {
 
   getUserByPhone = async (phone: string): Promise<User | null> => {
     try {
-      const result = await query("SELECT * FROM users WHERE phone = $1", [
+      const result = await query(`SELECT * FROM ${TableNames.USERS} WHERE phone = $1`, [
         phone,
       ])
 
@@ -51,7 +52,7 @@ export class UserRepository {
 
   getUserById = async (userId: number): Promise<User | null> => {
     try {
-      const result = await query("SELECT * FROM users WHERE id = $1", [userId])
+      const result = await query(`SELECT * FROM ${TableNames.USERS} WHERE id = $1`, [userId])
 
       // device with such deviceId not found
       if (!result.rows[0]) return null
